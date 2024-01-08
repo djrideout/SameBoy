@@ -1,5 +1,6 @@
 #include "audio.h"
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 #ifndef _WIN32
 #define AUDIO_FREQUENCY 96000
@@ -24,6 +25,7 @@
 
 static SDL_AudioDeviceID device_id;
 static SDL_AudioSpec want_aspec, have_aspec;
+static Mix_Music *music;
 
 #define AUDIO_BUFFER_SIZE 512
 static unsigned buffer_pos = 0;
@@ -72,6 +74,14 @@ static bool _audio_init(void)
         return false;
     }
 
+    int result = 0;
+    int flags = MIX_INIT_MP3;
+    if (flags != (result = Mix_Init(flags))) {
+        printf("Could not initialize mixer (result: %d).\n", result);
+        printf("Mix_Init: %s\n", Mix_GetError());
+        return false;
+    }
+
     /* Configure Audio */
     memset(&want_aspec, 0, sizeof(want_aspec));
     want_aspec.freq = AUDIO_FREQUENCY;
@@ -98,6 +108,7 @@ static bool _audio_init(void)
 #endif
     
     device_id = SDL_OpenAudioDevice(0, 0, &want_aspec, &have_aspec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE);
+    Mix_OpenAudio(want_aspec.freq, want_aspec.format, want_aspec.channels, want_aspec.samples / want_aspec.channels);
     
     return true;
 }
@@ -105,7 +116,18 @@ static bool _audio_init(void)
 static void _audio_deinit(void)
 {
     _audio_set_paused(true);
+    Mix_FreeMusic(music);
     SDL_CloseAudioDevice(device_id);
+}
+
+static void _audio_play_music(uint8_t music_id) {
+    Mix_FreeMusic(music);
+    char filename[12];
+    sprintf(filename, "Music/%d.mp3", music_id);
+    music = Mix_LoadMUS(filename);
+    if (music != NULL) {
+        Mix_PlayMusic(music, 1);
+    }
 }
 
 GB_AUDIO_DRIVER(SDL);

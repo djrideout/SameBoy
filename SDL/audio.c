@@ -85,6 +85,14 @@ void GB_audio_queue_sample(GB_sample_t *sample)
     return driver->audio_queue_sample(sample);
 }
 
+void GB_audio_play_music(uint8_t music_id)
+{
+    if (unlikely(!driver)) return;
+    if (driver->audio_play_music) {
+        driver->audio_play_music(music_id);
+    }
+}
+
 const char *GB_audio_driver_name(void)
 {
     if (unlikely(!driver)) return "None";

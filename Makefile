@@ -185,7 +185,7 @@ endif
 
 ifeq (,$(PKG_CONFIG))
 SDL_CFLAGS := $(shell sdl2-config --cflags)
-SDL_LDFLAGS := $(shell sdl2-config --libs) -lpthread
+SDL_LDFLAGS := $(shell sdl2-config --libs) -lpthread -lSDL2_mixer
 
 # We cannot detect the presence of OpenAL dev headers,
 # so we must do this manually
@@ -200,7 +200,7 @@ SDL_AUDIO_DRIVERS += openal
 endif
 else
 SDL_CFLAGS := $(shell $(PKG_CONFIG) --cflags sdl2)
-SDL_LDFLAGS := $(shell $(PKG_CONFIG) --libs sdl2) -lpthread
+SDL_LDFLAGS := $(shell $(PKG_CONFIG) --libs sdl2) -lpthread -lSDL2_mixer
 
 # Allow OpenAL to be disabled even if the development libraries are available
 ifneq ($(ENABLE_OPENAL),0)

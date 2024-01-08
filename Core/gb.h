@@ -278,6 +278,7 @@ typedef void (*GB_icd_pixel_callback_t)(GB_gameboy_t *gb, uint8_t row);
 typedef void (*GB_icd_hreset_callback_t)(GB_gameboy_t *gb);
 typedef void (*GB_icd_vreset_callback_t)(GB_gameboy_t *gb);
 typedef void (*GB_boot_rom_load_callback_t)(GB_gameboy_t *gb, GB_boot_rom_t type);
+typedef void (*GB_play_music_callback_t)(GB_gameboy_t *gb, uint8_t music_id);
 
 typedef void (*GB_execution_callback_t)(GB_gameboy_t *gb, uint16_t address, uint8_t opcode);
 typedef void (*GB_lcd_line_callback_t)(GB_gameboy_t *gb, uint8_t line);
@@ -735,6 +736,7 @@ struct GB_gameboy_internal_s {
         GB_lcd_line_callback_t lcd_line_callback;
         GB_lcd_status_callback_t lcd_status_callback;
         GB_debugger_reload_callback_t debugger_reload_callback;
+        GB_play_music_callback_t play_music_callback;
                
 #ifndef GB_DISABLE_DEBUGGER
         /*** Debugger ***/
@@ -952,6 +954,7 @@ void GB_set_rgb_encode_callback(GB_gameboy_t *gb, GB_rgb_encode_callback_t callb
 void GB_set_infrared_callback(GB_gameboy_t *gb, GB_infrared_callback_t callback);
 void GB_set_rumble_callback(GB_gameboy_t *gb, GB_rumble_callback_t callback);
 void GB_set_update_input_hint_callback(GB_gameboy_t *gb, GB_update_input_hint_callback_t callback);
+void GB_set_play_music_callback(GB_gameboy_t *gb, GB_play_music_callback_t callback);
 /* Called when a new boot ROM is needed. The callback should call GB_load_boot_rom or GB_load_boot_rom_from_buffer */
 void GB_set_boot_rom_load_callback(GB_gameboy_t *gb, GB_boot_rom_load_callback_t callback);
     

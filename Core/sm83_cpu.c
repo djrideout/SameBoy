@@ -3,6 +3,8 @@
 #include <assert.h>
 #include "gb.h"
 
+/* Define pokegold (no music ver.) subroutine addresses here */
+#define _PlayMusic 0x4B30
 
 typedef void opcode_t(GB_gameboy_t *gb, uint8_t opcode);
 
@@ -1727,6 +1729,16 @@ void GB_cpu_run(GB_gameboy_t *gb)
     }
     /* Run mode */
     else if (!gb->halted) {
+        switch (gb->pc) {
+            case _PlayMusic:
+                uint8_t music_id = gb->registers[GB_REGISTER_DE];
+                if (gb->play_music_callback) {
+                    gb->play_music_callback(gb, music_id);
+                }
+                break;
+            default:
+                break;
+        }
         uint8_t opcode = cycle_read(gb, gb->pc++);
         if (unlikely(gb->hdma_on)) {
             GB_hdma_run(gb);

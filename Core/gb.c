@@ -1975,6 +1975,11 @@ void GB_set_update_input_hint_callback(GB_gameboy_t *gb, GB_update_input_hint_ca
     gb->update_input_hint_callback = callback;
 }
 
+void GB_set_play_music_callback(GB_gameboy_t *gb, GB_play_music_callback_t callback)
+{
+    gb->play_music_callback = callback;
+}
+
 double GB_get_usual_frame_rate(GB_gameboy_t *gb)
 {
     return GB_get_clock_rate(gb) / (double)LCDC_PERIOD;
