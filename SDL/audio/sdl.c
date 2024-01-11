@@ -120,13 +120,21 @@ static void _audio_deinit(void)
     SDL_CloseAudioDevice(device_id);
 }
 
-static void _audio_play_music(uint8_t music_id) {
+static void _audio_play_music(uint8_t music_id)
+{
     Mix_FreeMusic(music);
     char filename[12];
-    sprintf(filename, "Music/%d.mp3", music_id);
+    sprintf(filename, "Music/%x.mp3", music_id);
     music = Mix_LoadMUS(filename);
     if (music != NULL) {
-        Mix_PlayMusic(music, 1);
+        Mix_PlayMusic(music, 999);
+    }
+}
+
+static void _audio_music_volume(int volume)
+{
+    if (volume != Mix_VolumeMusic(-1)) { // Passing -1 to volume queries the current volume
+        Mix_VolumeMusic(volume);
     }
 }
 

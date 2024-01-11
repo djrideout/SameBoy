@@ -93,6 +93,14 @@ void GB_audio_play_music(uint8_t music_id)
     }
 }
 
+void GB_audio_music_volume(int volume)
+{
+    if (unlikely(!driver)) return;
+    if (driver->audio_music_volume) {
+        driver->audio_music_volume(volume);
+    }
+}
+
 const char *GB_audio_driver_name(void)
 {
     if (unlikely(!driver)) return "None";

@@ -13,6 +13,7 @@ void GB_audio_queue_sample(GB_sample_t *sample);
 bool GB_audio_init(void);
 void GB_audio_deinit(void);
 void GB_audio_play_music(uint8_t music_id);
+void GB_audio_music_volume(int volume);
 const char *GB_audio_driver_name(void);
 const char *GB_audio_driver_name_at_index(unsigned index);
 
@@ -26,6 +27,7 @@ typedef struct {
     typeof(GB_audio_init) *audio_init;
     typeof(GB_audio_deinit) *audio_deinit;
     typeof(GB_audio_play_music) *audio_play_music;
+    typeof(GB_audio_music_volume) *audio_music_volume;
     const char *name;
 } GB_audio_driver_t;
 
@@ -39,6 +41,7 @@ typedef struct {
     .audio_init = _audio_init, \
     .audio_deinit = _audio_deinit, \
     .audio_play_music = _audio_play_music, \
+    .audio_music_volume = _audio_music_volume, \
     .name = #_name, \
 }
 

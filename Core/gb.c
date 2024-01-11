@@ -1980,6 +1980,11 @@ void GB_set_play_music_callback(GB_gameboy_t *gb, GB_play_music_callback_t callb
     gb->play_music_callback = callback;
 }
 
+void GB_set_music_volume_callback(GB_gameboy_t *gb, GB_music_volume_callback_t callback)
+{
+    gb->music_volume_callback = callback;
+}
+
 double GB_get_usual_frame_rate(GB_gameboy_t *gb)
 {
     return GB_get_clock_rate(gb) / (double)LCDC_PERIOD;

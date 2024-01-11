@@ -4,7 +4,16 @@
 #include "gb.h"
 
 /* Define pokegold (no music ver.) subroutine addresses here */
-#define _PlayMusic 0x4B30
+#define _UpdateSound 0x405C // Bank 0x3A (absolute)
+#define _PlayMusic 0x4B30 // Bank 0x3A (absolute)
+
+/* Define pokegold (no music ver.) WRAM addresses here */
+#define wSFXPriority 0x1B6 // Bank 0x00 (relative to bank) - If this is true and SFX is playing, music should mute
+#define wMusicPlaying 0x000 // Bank 0x00 (relative to bank) - Actually means all audio, not just music
+#define wChannel5Flags1 0x0CC // Bank 0x00 (relative to bank) - SFX Channel 1, bit 0 set means channel is on
+#define wChannel6Flags1 0x0FE // Bank 0x00 (relative to bank) - SFX Channel 2, bit 0 set means channel is on
+#define wChannel7Flags1 0x130 // Bank 0x00 (relative to bank) - SFX Channel 3, bit 0 set means channel is on
+#define wChannel8Flags1 0x162 // Bank 0x00 (relative to bank) - SFX Channel 4, bit 0 set means channel is on
 
 typedef void opcode_t(GB_gameboy_t *gb, uint8_t opcode);
 
@@ -1729,15 +1738,30 @@ void GB_cpu_run(GB_gameboy_t *gb)
     }
     /* Run mode */
     else if (!gb->halted) {
-        switch (gb->pc) {
-            case _PlayMusic:
-                uint8_t music_id = gb->registers[GB_REGISTER_DE];
-                if (gb->play_music_callback) {
-                    gb->play_music_callback(gb, music_id);
-                }
-                break;
-            default:
-                break;
+        if (gb->mbc_rom_bank == 0x3A) {
+            switch (gb->pc) {
+                case _PlayMusic:
+                    uint8_t music_id = gb->registers[GB_REGISTER_DE];
+                    if (gb->play_music_callback) {
+                        gb->play_music_callback(gb, music_id);
+                    }
+                    break;
+                case _UpdateSound:
+                    // We're on WRAM bank 0x00 here
+                    int sfx_channels_on = 0;
+                    sfx_channels_on += (gb->ram[wChannel5Flags1] & 1);
+                    sfx_channels_on += (gb->ram[wChannel6Flags1] & 1);
+                    sfx_channels_on += (gb->ram[wChannel7Flags1] & 1);
+                    sfx_channels_on += (gb->ram[wChannel8Flags1] & 1);
+                    if (!gb->ram[wMusicPlaying] || gb->ram[wSFXPriority]) {
+                        sfx_channels_on = 4;
+                    }
+                    int volume = 128 - 32 * sfx_channels_on; // SDL_mixer volume is from 0 to 128
+                    gb->music_volume_callback(gb, volume);
+                    break;
+                default:
+                    break;
+            }
         }
         uint8_t opcode = cycle_read(gb, gb->pc++);
         if (unlikely(gb->hdma_on)) {
