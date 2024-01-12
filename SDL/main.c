@@ -750,6 +750,11 @@ static void music_volume_callback(GB_gameboy_t *gb, int volume)
     GB_audio_music_volume(volume);
 }
 
+static void music_fade_out_callback(GB_gameboy_t *gb, int ms)
+{
+    GB_audio_music_fade_out(ms);
+}
+
 static void run(void)
 {
     SDL_ShowCursor(SDL_DISABLE);
@@ -811,6 +816,7 @@ restart:
         GB_set_debugger_reload_callback(&gb, debugger_reload_callback);
         GB_set_play_music_callback(&gb, play_music_callback);
         GB_set_music_volume_callback(&gb, music_volume_callback);
+        GB_set_music_fade_out_callback(&gb, music_fade_out_callback);
     }
     if (stop_on_start) {
         stop_on_start = false;

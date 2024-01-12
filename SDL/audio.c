@@ -101,6 +101,14 @@ void GB_audio_music_volume(int volume)
     }
 }
 
+void GB_audio_music_fade_out(int ms)
+{
+    if (unlikely(!driver)) return;
+    if (driver->audio_music_fade_out) {
+        driver->audio_music_fade_out(ms);
+    }
+}
+
 const char *GB_audio_driver_name(void)
 {
     if (unlikely(!driver)) return "None";

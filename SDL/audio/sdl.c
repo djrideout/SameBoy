@@ -138,4 +138,9 @@ static void _audio_music_volume(int volume)
     }
 }
 
+static void _audio_music_fade_out(int ms)
+{
+    Mix_FadeOutMusic(ms);
+}
+
 GB_AUDIO_DRIVER(SDL);

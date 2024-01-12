@@ -6,6 +6,7 @@
 /* Define pokegold (no music ver.) subroutine addresses here */
 #define _UpdateSound 0x405C // Bank 0x3A (absolute)
 #define _PlayMusic 0x4B30 // Bank 0x3A (absolute)
+#define FadeMusic_fade_out 0x437A // Bank 0x3A (absolute)
 
 /* Define pokegold (no music ver.) WRAM addresses here */
 #define wSFXPriority 0x1B6 // Bank 0x00 (relative to bank) - If this is true and SFX is playing, music should mute
@@ -1740,6 +1741,9 @@ void GB_cpu_run(GB_gameboy_t *gb)
     else if (!gb->halted) {
         if (gb->mbc_rom_bank == 0x3A) {
             switch (gb->pc) {
+                case FadeMusic_fade_out:
+                    gb->music_fade_out_callback(gb, 1000);
+                    break;
                 case _PlayMusic:
                     uint8_t music_id = gb->registers[GB_REGISTER_DE];
                     if (gb->play_music_callback) {
